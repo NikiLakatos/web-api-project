@@ -24,8 +24,7 @@ namespace Repos.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> Get()
         {
-            var userId = int.Parse(User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier).Value);
-            return Ok(await _repoCharacter.GetAllCharacter(userId));
+            return Ok(await _repoCharacter.GetAllCharacter());
         }
 
         [HttpGet("{id}")]
