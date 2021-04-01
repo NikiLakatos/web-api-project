@@ -56,17 +56,24 @@ namespace Repos.Services.CharacterService
             ServiceResponse<GetCharacterDto> serviceResponse = new ServiceResponse<GetCharacterDto>();
             try
             {
-                Character character = await _dataContext.Characters.FirstOrDefaultAsync(i => i.Id == updateCharacter.Id);
-                character.Name = updateCharacter.Name;
-                character.Class = updateCharacter.Class;
-                character.Defense = updateCharacter.Defense;
-                character.HitPoints = updateCharacter.HitPoints;
-                character.Intelligence = updateCharacter.Intelligence;
-                character.Strength = updateCharacter.Strength;
+                Character character = await _dataContext.Characters.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == updateCharacter.Id);
+                if(character.User.Id  == GetUserId()){
+                    character.Name = updateCharacter.Name;
+                    character.Class = updateCharacter.Class;
+                    character.Defense = updateCharacter.Defense;
+                    character.HitPoints = updateCharacter.HitPoints;
+                    character.Intelligence = updateCharacter.Intelligence;
+                    character.Strength = updateCharacter.Strength;
 
-                _dataContext.Update(character);
-                await _dataContext.SaveChangesAsync();
-                serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+                    _dataContext.Update(character);
+                    await _dataContext.SaveChangesAsync();
+                    serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+                }
+                else {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Character not found.";
+                }
+                
             }
             catch (Exception e)
             {
